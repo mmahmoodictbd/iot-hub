@@ -1,0 +1,74 @@
+### Common
+
+server:
+  port: 8080
+
+spring:
+  application:
+    name: MetricsQueryService
+  profiles:
+    active: dev
+  resources:
+    add-mappings: false
+  mvc:
+    throw-exception-if-no-handler-found: true
+
+logging:
+  level:
+    root: INFO
+
+metrics:
+  influxdb:
+    url: http://localhost:8086
+    username: admin
+    password: admin
+    database: SensorData
+    retention-policy: autogen
+    read-timeout: 5000
+
+---
+
+### Dev profile
+
+spring:
+  profiles: dev
+
+logging:
+  level:
+    com.unloadbrain: DEBUG
+
+---
+
+### Prod profile
+
+spring:
+  profiles: prod
+
+logging:
+  level:
+    com.unloadbrain: INFO
+
+---
+
+### Integration test profile
+
+spring:
+  profiles: it
+  main:
+    allow-bean-definition-overriding: true
+  http:
+    log-request-details: true
+
+logging:
+  level:
+    org.springframework.web.reactive.function.client.ExchangeFunctions: TRACE
+---
+
+### docker profile
+
+spring:
+  profiles: docker
+
+metrics:
+  influxdb:
+    url: http://influxdb:8086
