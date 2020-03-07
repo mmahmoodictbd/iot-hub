@@ -45,6 +45,14 @@
             <version>${json-flattener.version}</version>
         </dependency>
 
+        <!-- Test dependencies -->
+
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
 </project>
