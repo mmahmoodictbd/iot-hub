@@ -1,0 +1,16 @@
+
+kafka:
+  connector:
+    bootstrap:
+      servers: localhost:9092
+    consumer:
+      groupId: exampleGroupId
+      autoOffsetReset: earliest
+    topics: ExampleTopic
+    influxdb:
+      url: http://localhost:8086
+      username: admin
+      password: admin
+      database: db0
+      retentionPolicy: autogen
+      readTimeOut: 3000
