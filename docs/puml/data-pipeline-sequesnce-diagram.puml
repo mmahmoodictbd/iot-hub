@@ -1,0 +1,23 @@
+@startuml
+
+actor "**virtual-device-simulator**\nVirtual sensors connected \nwith gateway" as Sensors
+participant "**MQTT Broker**\nMosquitto" as Mosquitto
+participant "**simple-kafka-mqtt-connector**\nListen MQTT message \nand create Kafka message" as MqttToKafkaConnector
+participant "**JMS Broker**\nKafka" as Kafka
+participant "**kafka-connect-influxdb-sink**\nListen to Kafka message\nand Persisting to InfluxDB" as KafkaToInfluxDbConnector
+participant "**InfluxDB**" as InfluxDB
+
+activate Sensors
+activate Mosquitto
+activate MqttToKafkaConnector
+activate Kafka
+activate KafkaToInfluxDbConnector
+activate InfluxDB
+
+Sensors -> Mosquitto : POST MQTT message
+Mosquitto -> MqttToKafkaConnector
+MqttToKafkaConnector -> Kafka
+Kafka -> KafkaToInfluxDbConnector
+KafkaToInfluxDbConnector -> InfluxDB
+
+@enduml

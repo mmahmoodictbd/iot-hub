@@ -1,0 +1,168 @@
+# IoT Hub
+
+###### Motivation
+
+Implemented code would be a nice example of IoT Hub WebAPIs and simulated SmartHome sensors.
+This project is an link:docs/PROBLEM_STATEMENT.pdf[assignment].
+
+
+### Features
+
+IoT Hub provides:
+
+- Virtual IoT sensors.
+- Virtual IoT Gateway that communicate using light-weight MQTT protocol.
+- Sensors data pipeline, Sensor -> MQTT Broker -> Kafka -> InfluxDB.
+- WebAPIs to query metrics.
+
+###### Data Pipeline:
+image::docs/images/data-pipeline-sequesnce-diagram.png[data-pipeline-sequesnce-diagram screenshot]
+
+###### Metrics Query APIs:
+image::docs/images/query-sequesnce-diagram.png[query-sequesnce-diagram screenshot]
+
+
+### Design Decisions
+
+- Authentication and authorization is not taking into consideration.
+- `kafka-connect-influxdb-sink` could be replaced with open-source Kafka connector.
+- WebAPI in `SensorDataQueryAPI` is highly opinionated. Need better API design.
+
+
+### Modules Introduction
+
+- `kafka-connect-influxdb-sink`: Kafka InfluxDB Sink.
+- `virtual-device-simulator`: Simulated IoT sensors and Gateway.
+- `metrics-query-service`: Query on stored InfluxDB metrics.
+
+
+### Improvements to make
+
+- Improve architectural design, with more added code, pattern should appear.
+- Code improvements:
+* `MinValueQueryService` is not implemented yet, but on purpose, just have to follow `MinValueQueryService`.
+* Add end-to-end tests. Cover more unit tests.
+* Improve logging.
+- Generate and check OWASP report to find vulnerable component.
+- Write Gatling performance tests.
+
+
+### How to run
+
+###### Prerequisite
+- JDK 11 (Tested with OpenJDK 11.0.6)
+- Maven 3.6.x+
+- Docker 19.03.5
+- Docker Compose 1.25.4
+
+###### Run following services:
+
+- `virtual-device-simulator`: Virtual sensors and gateway, produces MQTT message and post to Mosquitto.
+- `mosquitto`: MQTT Broker.
+- `kafka-zookeeper`: Kafka zookeeper.
+- `kafka`: Event / Message bus.
+- `kafdrop`: UI to administer Kafka.
+- `simple-kafka-mqtt-connector`: MQTT to Kafka Connector.
+- `influxdb`:  Time series database.
+- `chronograf`: Time-Series Data Visualization.
+- `kafka-connect-influxdb-sink`:  Kafka to InfluxDB Connector.
+
+###### Run infrastructure component using Docker Compose
+```
+$ docker-compose up # Make sure all services are running
+```
+
+image::docs/images/docker-ps.png[docker ps screenshot]
+
+###### Build
+```
+$ mvn clean compile install
+```
+
+###### Run
+```
+$ telnet localhost 8086 # Verify InfluxDB is running.
+$ java -jar metrics-query-service/target/metrics-query-service.jar
+```
+or
+```
+$ cd metrics-query-service
+$ mvn spring-boot:run
+```
+
+###### Quick test
+
+- Should able to see Kafka topics at `http://docker-ip:9000/`.
+- Should able to see InfluxDB data at `http://docker-ip:8888/sources/0/chronograf/data-explorer`.
+
+Sample request:
+```
+curl --location --request POST 'localhost:8080/api/devices/metrics/aggregate?aggregateOperation=max&aggregateField=deviceData.temperature&deviceGroup=TemperatureSensor&startTime=1183495454&endTime=2583495454'
+```
+
+example response:
+```
+{
+    "query": {
+        "operation": "max",
+        "deviceId": null,
+        "deviceGroup": "TemperatureSensor",
+        "startTime": 1183495454,
+        "endTime": 2583495454,
+        "additionalParams": {
+            "aggregateField": "deviceData.temperature"
+        }
+    },
+    "response": {
+        "max": 44.903558920361355
+    }
+}
+```
+
+
+### Development
+##### How to run tests
+
+###### How to run unit tests
+To run the unit tests, execute the following commands
+```
+mvn clean test-compile test
+```
+
+###### How to run integration tests
+To run the integration tests, execute the following commands
+```
+mvn clean test-compile verify -DskipTests=true
+```
+
+###### How to run both unit tests and integration tests
+To run the integration tests, execute the following commands
+```
+mvn clean test-compile verify
+```
+
+###### How to run pitest
+To run the mutation tests, execute the following commands
+```
+mvn clean install test-compile test
+mvn org.pitest:pitest-maven:mutationCoverage
+```
+
+###### Build Docker image for `kafka-connect-influxdb-sink`
+```
+$ cd kafka-connect-influxdb-sink
+$ mvn clean compile package
+$ docker build -t mmahmood/kafka-connect-influxdb-sink:latest -f Dockerfile .
+$ docker push mmahmood/kafka-connect-influxdb-sink:latest
+```
+
+###### Build Docker image for `virtual-device-simulator`
+```
+$ cd virtual-device-simulator
+$ mvn clean compile package
+$ docker build -t mmahmood/virtual-device-simulator:latest -f Dockerfile .
+$ docker push mmahmood/virtual-device-simulator:latest
+```
+
+### Copyright & License
+Licensed under the MIT License, see the link:LICENSE[LICENSE] file for details.

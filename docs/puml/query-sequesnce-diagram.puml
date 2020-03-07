@@ -1,0 +1,22 @@
+@startuml
+
+hide footbox
+
+actor "Authenticated User" as USER
+participant "**Web APIs**\nmetrics-query-service" as WebAPIs
+participant "**QueryService**\nMaxValueQueryService\nMany more ..." as QService
+participant "**PersistentService**\nInfluxDB" as InfluxDB
+
+activate WebAPIs
+activate QService
+activate InfluxDB
+
+USER -> WebAPIs : POST /api/devices/metrics/aggregate
+WebAPIs -> QService
+QService -> InfluxDB : fetch data from persistent store
+
+InfluxDB -> QService: returns time-series sensor data
+QService -> WebAPIs
+WebAPIs -> USER : HTTP 201
+
+@enduml
