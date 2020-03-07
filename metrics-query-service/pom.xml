@@ -17,7 +17,7 @@
     <version>1.0.0</version>
 
     <name>metrics-query-service</name>
-    <description></description>
+    <description>Query on stored InfluxDB metrics.</description>
 
     <properties>
         <influxdb-java.version>2.15</influxdb-java.version>
