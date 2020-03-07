@@ -17,7 +17,7 @@
     <version>1.0.0</version>
 
     <name>virtual-device-simulator</name>
-    <description></description>
+    <description>Simulated IoT sensors and Gateway</description>
 
     <properties>
         <org.eclipse.paho.client.mqttv3.version>1.2.2</org.eclipse.paho.client.mqttv3.version>

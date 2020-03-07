@@ -18,7 +18,7 @@
     <version>1.0.0</version>
 
     <name>iot-hub</name>
-    <description></description>
+    <description>IoT Hub WebAPIs and simulated SmartHome sensors.</description>
 
     <scm>
         <url>https://github.com/mmahmoodictbd/iot-hub</url>
