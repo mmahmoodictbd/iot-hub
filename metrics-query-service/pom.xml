@@ -6,12 +6,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.unloadbrain.assignement</groupId>
+        <groupId>com.unloadbrain.assignment</groupId>
         <artifactId>iot-hub</artifactId>
         <version>1.0.0</version>
     </parent>
 
-    <groupId>com.unloadbrain.assignement</groupId>
+    <groupId>com.unloadbrain.assignment</groupId>
     <artifactId>metrics-query-service</artifactId>
     <packaging>jar</packaging>
     <version>1.0.0</version>
@@ -19,13 +19,16 @@
     <name>metrics-query-service</name>
     <description></description>
 
+    <properties>
+        <influxdb-java.version>2.15</influxdb-java.version>
+    </properties>
 
     <dependencies>
 
         <dependency>
-            <groupId>com.unloadbrain.assignement</groupId>
-            <artifactId>kafka-connect-influxdb-sink</artifactId>
-            <version>1.0.0</version>
+            <groupId>org.influxdb</groupId>
+            <artifactId>influxdb-java</artifactId>
+            <version>${influxdb-java.version}</version>
         </dependency>
 
     </dependencies>

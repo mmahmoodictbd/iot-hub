@@ -12,7 +12,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
-    <groupId>com.unloadbrain.assignement</groupId>
+    <groupId>com.unloadbrain.assignment</groupId>
     <artifactId>iot-hub</artifactId>
     <packaging>pom</packaging>
     <version>1.0.0</version>
@@ -42,26 +42,25 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <java.version>1.8</java.version>
+        <java.version>11</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
+        <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
 
         <spring-kafka.version>2.2.7.RELEASE</spring-kafka.version>
-        <jsoup.version>1.12.1</jsoup.version>
 
         <junit.version>4.12</junit.version>
         <mockito-core.version>2.25.0</mockito-core.version>
         <rest-assured.version>3.3.0</rest-assured.version>
         <hamcrest.version>2.1</hamcrest.version>
         <pitest-maven.version>1.4.6</pitest-maven.version>
-        <cassandra.unit.version>3.11.2.0</cassandra.unit.version>
 
         <skipTests>false</skipTests>
         <skip.surefire.tests>${skipTests}</skip.surefire.tests>
-        <maven-surefire-plugin.version>2.22.1</maven-surefire-plugin.version>
+        <maven-surefire-plugin.version>2.18.1</maven-surefire-plugin.version>
 
         <skip.failsafe.tests>false</skip.failsafe.tests>
-        <maven-failsafe-plugin.version>2.22.1</maven-failsafe-plugin.version>
+        <maven-failsafe-plugin.version>2.18.1</maven-failsafe-plugin.version>
         <build-helper-maven-plugin.version>3.0.0</build-helper-maven-plugin.version>
         <jacoco-maven-plugin.version>0.8.3</jacoco-maven-plugin.version>
 
@@ -114,12 +113,6 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.springframework.kafka</groupId>
-            <artifactId>spring-kafka-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-
         <!-- Runtime dependencies -->
 
         <dependency>
@@ -167,6 +160,12 @@
         </pluginManagement>
 
         <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+            </plugin>
 
             <plugin>
                 <groupId>org.sonarsource.scanner.maven</groupId>
@@ -249,6 +248,9 @@
                     <excludes>
                         <exclude>**/*IT.java</exclude>
                     </excludes>
+                    <argLine>
+                        --illegal-access=permit
+                    </argLine>
                 </configuration>
             </plugin>
 
@@ -310,6 +312,9 @@
                 <configuration>
                     <skipTests>${skip.failsafe.tests}</skipTests>
                     <argLine>${itCoverageAgent}</argLine>
+                    <argLine>
+                        --illegal-access=permit
+                    </argLine>
                 </configuration>
             </plugin>
 
