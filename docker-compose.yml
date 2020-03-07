@@ -1,0 +1,136 @@
+version: '3.3'
+
+services:
+
+  mosquitto:
+    container_name: mosquitto
+    hostname: mosquitto
+    image: eclipse-mosquitto
+    ports:
+      - 1883:1883
+      - 9001:9001
+    networks:
+      - iot-hub
+
+  kafka-zookeeper:
+    container_name: kafka-zookeeper
+    hostname: kafka-zookeeper
+    image: wurstmeister/zookeeper
+    ports:
+      - 2181:2181
+    networks:
+      - iot-hub
+
+  kafka:
+    container_name: kafka
+    hostname: kafka
+    image: wurstmeister/kafka
+    command: [start-kafka.sh]
+    ports:
+      - 9092:9092
+      - 29092:29092
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: localhost # docker-machine ip
+      KAFKA_LISTENERS: "INTERNAL://:9092,EXTERNAL://:29092"
+      KAFKA_ADVERTISED_LISTENERS: "INTERNAL://kafka:9092,EXTERNAL://localhost:29092"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT"
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_ZOOKEEPER_CONNECT: kafka-zookeeper:2181
+      KAFKA_ADVERTISED_PORT: 29092
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - kafka-zookeeper
+    networks:
+      - iot-hub
+
+  kafdrop:
+    container_name: kafdrop
+    image: obsidiandynamics/kafdrop
+    ports:
+      - 9000:9000
+    environment:
+      KAFKA_BROKERCONNECT: "kafka:9092"
+      JVM_OPTS: "-Xms16M -Xmx48M -Xss180K -XX:-TieredCompilation -XX:+UseStringDeduplication -noverify"
+    depends_on:
+      - kafka
+    networks:
+      - iot-hub
+
+  simple-kafka-mqtt-connector:
+    image: arthurgrigo/simple-kafka-mqtt-connector:0.0.1-SNAPSHOT
+    restart: always
+    hostname: simple-kafka-mqtt-connector
+    container_name: simple-kafka-mqtt-connector
+    environment:
+      KAFKA_HOST: kafka
+      KAFKA_PORT: 9092
+      KAFKA_CLIENT_ID: simple-kafka-mqtt-connector-1
+      MQTT_HOST: mosquitto
+      MQTT_PORT: 1883
+      MQTT_CLIENT_ID: simple-kafka-mqtt-connector-1
+      MQTT_QOS: 2
+      TOPIC_MAPPING: TemperatureSensor>>>TemperatureSensor;HeartRateMonitor>>>HeartRateMonitor;FuelGaugeSensor>>>FuelGaugeSensor;
+    networks:
+      - iot-hub
+
+  influxdb:
+    image: influxdb:latest
+    container_name: influxdb
+    ports:
+      - 8086:8086 # HTTP API
+      - 8090:8090
+    environment:
+      INFLUXDB_DB: SensorData
+      INFLUXDB_ADMIN_USER: admin
+      INFLUXDB_ADMIN_PASSWORD: admin
+      INFLUXDB_USER: admin
+      INFLUXDB_USER_PASSWORD: admin
+      INFLUXDB_ADMIN_ENABLED: true
+    volumes:
+      - influxdb-storage:/var/lib/influxdb
+    networks:
+      - iot-hub
+
+  chronograf:
+    image: chronograf:latest
+    container_name: chronograf
+    ports:
+      - 8888:8888
+    environment:
+      INFLUXDB_URL: http://influxdb:8086
+    links:
+      - influxdb:influxdb
+    volumes:
+      - chronograf-storage:/var/lib/chronograf
+    networks:
+      - iot-hub
+
+  kafka-connect-influxdb-sink:
+    image: mmahmood/kafka-connect-influxdb-sink:latest
+    container_name: kafka-connect-influxdb-sink
+    ports:
+      - 8889:8080
+    environment:
+      KAFKA_CONNECTOR_BOOTSTRAP_SERVERS: kafka:9092
+      KAFKA_CONNECTOR_CONSUMER_GROUPID: iot
+      KAFKA_CONNECTOR_CONSUMER_AUTOOFFSETRESET: earliest
+      KAFKA_CONNECTOR_TOPICS: TemperatureSensor,HeartRateMonitor,FuelGaugeSensor
+      KAFKA_CONNECTOR_INFLUXDB_URL: http://influxdb:8086
+      KAFKA_CONNECTOR_INFLUXDB_USERNAME: admin
+      KAFKA_CONNECTOR_INFLUXDB_PASSWORD: admin
+      KAFKA_CONNECTOR_INFLUXDB_DATABASE: SensorData
+      KAFKA_CONNECTOR_INFLUXDB_RETENTIONPOLICY: autogen
+      KAFKA_CONNECTOR_INFLUXDB_READTIMEOUT: 5000
+    depends_on:
+      - kafka
+      - influxdb
+    networks:
+      - iot-hub
+
+networks:
+  iot-hub:
+
+volumes:
+  influxdb-storage:
+  chronograf-storage:
