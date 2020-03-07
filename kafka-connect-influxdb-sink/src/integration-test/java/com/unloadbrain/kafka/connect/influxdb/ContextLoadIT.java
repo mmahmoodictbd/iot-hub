@@ -13,7 +13,7 @@ import static org.mockito.Mockito.mock;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class ApplicationIT {
+public class ContextLoadIT {
 
     @Test
     public void contextLoads() {
@@ -22,6 +22,7 @@ public class ApplicationIT {
     @Configuration
     static class TestConfig {
 
+        // The reason behind the mocking is InfluxDB tries to connect with the server.
         @Primary
         @Bean
         public InfluxDB influxDBMock() {

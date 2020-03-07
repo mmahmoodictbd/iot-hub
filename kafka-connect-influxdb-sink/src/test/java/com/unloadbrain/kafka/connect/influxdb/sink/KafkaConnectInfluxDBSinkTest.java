@@ -8,7 +8,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.ArgumentCaptor;
-import org.springframework.mock.env.MockEnvironment;
 
 import java.util.Collections;
 
@@ -57,8 +56,6 @@ public class KafkaConnectInfluxDBSinkTest {
     public void shouldThrowRuntimeExceptionWhenPayloadCannotBeMappedToHashMap() throws JsonProcessingException {
 
         // Given
-
-        MockEnvironment environment = new MockEnvironment();
 
         thrown.expect(RuntimeException.class);
         thrown.expectMessage("Could not transform json to HashMap.");
