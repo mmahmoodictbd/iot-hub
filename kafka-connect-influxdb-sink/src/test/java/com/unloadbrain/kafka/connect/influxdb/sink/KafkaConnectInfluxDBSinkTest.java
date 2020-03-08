@@ -2,6 +2,7 @@ package com.unloadbrain.kafka.connect.influxdb.sink;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.unloadbrain.kafka.connect.influxdb.exception.KafkaMessagePayloadConversionException;
 import org.influxdb.InfluxDB;
 import org.influxdb.dto.Point;
 import org.junit.Rule;
@@ -57,7 +58,7 @@ public class KafkaConnectInfluxDBSinkTest {
 
         // Given
 
-        thrown.expect(RuntimeException.class);
+        thrown.expect(KafkaMessagePayloadConversionException.class);
         thrown.expectMessage("Could not transform json to HashMap.");
 
         ObjectMapper mapperMock = mock(ObjectMapper.class);

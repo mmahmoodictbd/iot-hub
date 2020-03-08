@@ -17,6 +17,7 @@ public class ContextLoadIT {
 
     @Test
     public void contextLoads() {
+        // Verify application context load properly.
     }
 
     @Configuration

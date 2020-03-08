@@ -3,6 +3,7 @@ package com.unloadbrain.kafka.connect.influxdb.sink;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.wnameless.json.flattener.JsonFlattener;
+import com.unloadbrain.kafka.connect.influxdb.exception.KafkaMessagePayloadConversionException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.influxdb.InfluxDB;
@@ -31,7 +32,7 @@ public class KafkaConnectInfluxDBSink {
         try {
             fields = mapper.readValue(flattenedPayload, HashMap.class);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("Could not transform json to HashMap.");
+            throw new KafkaMessagePayloadConversionException("Could not transform json to HashMap.");
         }
 
         Point point = Point.measurement(topic).fields(fields).build();
