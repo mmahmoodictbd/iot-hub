@@ -40,7 +40,9 @@ image::docs/images/query-sequesnce-diagram.png[query-sequesnce-diagram screensho
 
 - Improve architectural design, with more added code, pattern should appear.
 - Code improvements:
+* Used `Observer` and `Observable` are deprecated, need to find alternative.
 * `MinValueQueryService` is not implemented yet, but on purpose, just have to follow `MinValueQueryService`.
+* Need to use more specific exception class, instead of `RuntimeException`.
 * Add end-to-end tests. Cover more unit tests.
 * Improve logging.
 - Generate and check OWASP report to find vulnerable component.
@@ -80,6 +82,11 @@ $ mvn clean compile install
 ```
 
 ###### Run
+
+```
+$ telnet localhost 8086 # Verify InfluxDB is running.
+```
+
 ```
 $ telnet localhost 8086 # Verify InfluxDB is running.
 $ java -jar metrics-query-service/target/metrics-query-service.jar
@@ -88,6 +95,10 @@ or
 ```
 $ cd metrics-query-service
 $ mvn spring-boot:run
+```
+
+```
+$ telnet localhost 8080 # Verify metrics-query-service is running.
 ```
 
 ###### Quick test
