@@ -60,7 +60,8 @@ public class Gateway implements Observer {
         MqttMessage mqttMessage = null;
         try {
             mqttMessage = new MqttMessage(objectMapper.writeValueAsBytes(message));
-        } catch (JsonProcessingException e) {
+        } catch (JsonProcessingException ex) {
+            log.error("Could not serialize device message to MqttMessage Bytes. Exception: {}", ex);
             throw new RuntimeException("Could not serialize device message to MqttMessage Bytes.");
         }
         mqttMessage.setQos(MQTT_MESSAGE_QOS);
@@ -68,7 +69,8 @@ public class Gateway implements Observer {
         try {
             mqttClient.publish(sensor.getType(), mqttMessage);
             log.debug("Published a message {} to topic {}", message, sensor.getType());
-        } catch (MqttException e) {
+        } catch (MqttException ex) {
+            log.error("Could not publish MQTT message to the server. Exception: {}", ex);
             throw new RuntimeException("Could not publish MQTT message to the server.");
         }
     }

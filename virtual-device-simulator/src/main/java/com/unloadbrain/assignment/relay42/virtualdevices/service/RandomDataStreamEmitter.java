@@ -6,12 +6,12 @@ import java.util.function.Consumer;
 
 public class RandomDataStreamEmitter {
 
-    private final static Random random = new Random();
+    private static final Random random = new Random();
 
     public void emitRandomIntsStream(int randomNumberOrigin, int randomNumberBound, int randomSleepBound,
                                      final Consumer<Integer> consumer) {
 
-        Thread thread = new Thread(String.format("RandomIntsDataStreamThread")) {
+        Thread thread = new Thread("RandomIntsDataStreamThread") {
             public void run() {
                 new SplittableRandom()
                         .ints(randomNumberOrigin, randomNumberBound)
@@ -28,7 +28,7 @@ public class RandomDataStreamEmitter {
     public void emitRandomDoubleStream(double randomNumberOrigin, double randomNumberBound, int randomSleepBound,
                                        final Consumer<Double> consumer) {
 
-        Thread thread = new Thread(String.format("RandomDoublesDataStreamThread")) {
+        Thread thread = new Thread("RandomDoublesDataStreamThread") {
             public void run() {
                 new SplittableRandom()
                         .doubles(randomNumberOrigin, randomNumberBound)
