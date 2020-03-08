@@ -48,7 +48,7 @@ public class SensorDataQueryApiIT {
     }
 
     @Test
-    public void shouldReturnTemperatureDataPoints() throws Exception {
+    public void shouldReturnQueryResponse() throws Exception {
 
         // Given
         when(queryServiceFactoryMock.getService(anyString())).thenReturn(new QueryService<String>() {

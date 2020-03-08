@@ -1,5 +1,6 @@
 package com.unloadbrain.assignment.relay42.metrics.service;
 
+import com.unloadbrain.assignment.relay42.metrics.exception.QueryServiceNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ public class QueryServiceFactory {
 
         QueryService service = queryServiceCache.get(operation);
         if (service == null) {
-            throw new RuntimeException(String.format("Unknown operation: %s", operation));
+            throw new QueryServiceNotFoundException(String.format("Unknown operation: %s", operation));
         }
         return service;
     }

@@ -53,7 +53,7 @@ public class MaxValueQueryService implements QueryService<MaxValue> {
 
         List<AggregateQueryResult> resultList = resultMapper.toPOJO(queryResult, AggregateQueryResult.class, query.getDeviceGroup());
 
-        if (resultList != null && resultList.size() > 0) {
+        if (resultList != null && !resultList.isEmpty()) {
             return QueryResponse.<MaxValue>builder()
                     .query(query)
                     .response(MaxValue.builder().max(BigDecimal.valueOf(resultList.get(0).getResult())).build())

@@ -2,6 +2,7 @@ package com.unloadbrain.assignment.relay42.metrics.service;
 
 import com.unloadbrain.assignment.relay42.metrics.dto.Query;
 import com.unloadbrain.assignment.relay42.metrics.dto.QueryResponse;
+import com.unloadbrain.assignment.relay42.metrics.exception.QueryServiceNotFoundException;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -50,7 +51,7 @@ public class QueryServiceFactoryTest {
 
         // Given
 
-        thrown.expect(RuntimeException.class);
+        thrown.expect(QueryServiceNotFoundException.class);
         thrown.expectMessage("Unknown operation: newOp");
 
         QueryServiceFactory queryServiceFactory = new QueryServiceFactory();
