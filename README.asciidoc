@@ -3,7 +3,7 @@
 ###### Motivation
 
 Implemented code would be a nice example of IoT Hub WebAPIs and simulated SmartHome sensors.
-This project is an link:docs/PROBLEM_STATEMENT.pdf[assignment].
+This project is an assignment.
 
 
 ### Features
